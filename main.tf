@@ -21,10 +21,14 @@ provider "azurerm" {
   tenant_id       = var.tenant_id
 }
 
-resource "azurerm_resource_group" "hcmxexample" {
-  name     = var.name
-  location = var.location
+data "azurerm_resource_group" "hcmxexample" {
+  name = var.resource_group
 }
+
+#resource "azurerm_resource_group" "hcmxexample" {
+#  name     = var.name
+#  location = var.location
+#}
 
 resource "azurerm_public_ip" "hcmxexample" {
   name                = var.name
