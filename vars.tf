@@ -10,6 +10,9 @@ variable "tenant_id" {
 variable "client_secret" {
   default = "client_secret"
   }
+variable "resource_group" {
+  default = "resource_group"
+  }
 variable "password" {
   default = "Admblabla!!!"
   }
