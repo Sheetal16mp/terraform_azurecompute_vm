@@ -32,7 +32,7 @@ data "azurerm_resource_group" "hcmxexample" {
 
 resource "azurerm_public_ip" "hcmxexample" {
   name                = var.name
-  resource_group_name = azurerm_resource_group.hcmxexample.name
+  resource_group_name = data.azurerm_resource_group.hcmxexample.name
   location            = var.location
   allocation_method   = "Dynamic"
   domain_name_label   = var.domain_name_label
@@ -44,7 +44,7 @@ resource "azurerm_public_ip" "hcmxexample" {
 resource "azurerm_network_security_group" "hcmxexample" {
   name                = var.name
   location            = var.location
-  resource_group_name = azurerm_resource_group.hcmxexample.name
+  resource_group_name = data.azurerm_resource_group.hcmxexample.name
   }
   
   resource "azurerm_network_security_rule" "hcmxexample" {
@@ -57,7 +57,7 @@ resource "azurerm_network_security_group" "hcmxexample" {
   destination_port_range      = "22"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = azurerm_resource_group.hcmxexample.name
+  resource_group_name         = data.azurerm_resource_group.hcmxexample.name
   network_security_group_name = azurerm_network_security_group.hcmxexample.name
 }
 
@@ -69,8 +69,8 @@ resource "azurerm_network_security_group" "hcmxexample" {
 
 resource "azurerm_virtual_network" "hcmxexample" {
   name                = var.name
-  location            = azurerm_resource_group.hcmxexample.location
-  resource_group_name = azurerm_resource_group.hcmxexample.name
+  location            = var.location
+  resource_group_name = data.azurerm_resource_group.hcmxexample.name
   address_space       = ["10.0.0.0/16"]
 
   # ddos_protection_plan {
@@ -82,7 +82,7 @@ resource "azurerm_virtual_network" "hcmxexample" {
 
 resource "azurerm_subnet" "hcmxexample" {
   name                 = var.name
-  resource_group_name  = azurerm_resource_group.hcmxexample.name
+  resource_group_name  = data.azurerm_resource_group.hcmxexample.name
   virtual_network_name = azurerm_virtual_network.hcmxexample.name
   address_prefixes     = ["10.0.2.0/24"]
 }
@@ -90,7 +90,7 @@ resource "azurerm_subnet" "hcmxexample" {
 resource "azurerm_network_interface" "hcmxexample" {
   name                = var.name
   location            = var.location
-  resource_group_name = azurerm_resource_group.hcmxexample.name
+  resource_group_name = data.azurerm_resource_group.hcmxexample.name
 
   ip_configuration {
     name                          = var.name
@@ -103,13 +103,13 @@ resource "azurerm_network_interface" "hcmxexample" {
 
 resource "azurerm_private_dns_zone" "hcmxexample" {
   name                = "hcmxexample.com"
-  resource_group_name = azurerm_resource_group.hcmxexample.name
+  resource_group_name = data.azurerm_resource_group.hcmxexample.name
 }
   
  resource "azurerm_linux_virtual_machine" "hcmxexample" {
   count = var.os_type=="linux" ? 1 : 0
   name                = var.name
-  resource_group_name = azurerm_resource_group.hcmxexample.name
+  resource_group_name = data.azurerm_resource_group.hcmxexample.name
   location            = var.location
   size                = var.vm_size
   admin_username      = var.username
@@ -137,7 +137,7 @@ resource "azurerm_private_dns_zone" "hcmxexample" {
 resource "azurerm_windows_virtual_machine" "hcmxexample" {
   count = var.os_type=="windows" ? 1 : 0
   name                = var.name
-  resource_group_name = azurerm_resource_group.hcmxexample.name
+  resource_group_name = data.azurerm_resource_group.hcmxexample.name
   location            = var.location
   size                = var.vm_size
   admin_username      = var.username
