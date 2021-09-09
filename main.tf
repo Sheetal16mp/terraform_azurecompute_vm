@@ -180,10 +180,6 @@ data "azurerm_public_ip" "hcmxexample" {
 }
 
 
-output "primary_dns_name" {
-  value = data.azurerm_public_ip.hcmxexample.vm_name
-}
-
 output "public_ip_address" {
   value = data.azurerm_public_ip.hcmxexample.ip_address
 }
