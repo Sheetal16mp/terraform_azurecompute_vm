@@ -108,7 +108,7 @@ resource "azurerm_network_interface" "hcmxexample" {
   location            = var.location
   size                = var.vm_size
   admin_username      = var.vm_username
-  admin_password      = var.vm_password
+  admin_password      = var.password
   disable_password_authentication = false
   network_interface_ids = [
     azurerm_network_interface.hcmxexample.id,
@@ -136,7 +136,7 @@ resource "azurerm_windows_virtual_machine" "hcmxexample" {
   location            = var.location
   size                = var.vm_size
   admin_username      = var.vm_username
-  admin_password      = var.vm_password
+  admin_password      = var.password
   network_interface_ids = [
     azurerm_network_interface.hcmxexample.id,
   ]
