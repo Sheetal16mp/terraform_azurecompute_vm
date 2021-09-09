@@ -21,7 +21,10 @@ variable "admin" {
     public_key = ""
   }
 }
-
+variable "type_of_storage" {
+  type   = string
+  default = "Standard_LRS"
+  }
 # variable "namespace" {
 #   description = "Prefix for resource names"
 #   default="cyphert"
