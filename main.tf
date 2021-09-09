@@ -191,7 +191,7 @@ data "azurerm_network_interface" "hcmxexample" {
 }
 
 output "network_interface_name" {
-  value = data.azurerm_network_interface.hcmxexample.id
+  value = azurerm_network_interface.hcmxexample.name
 }
 
 output "private_ip_address" {
