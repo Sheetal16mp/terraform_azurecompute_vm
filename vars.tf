@@ -21,14 +21,29 @@ variable "admin" {
     public_key = ""
   }
 }
-
-variable "namespace" {
-  description = "Prefix for resource names"
-  default="cyphert"
-}
-variable "name" {
+variable "type_of_storage" {
+  type   = string
+  default = "Standard_LRS"
+  }
+# variable "namespace" {
+#   description = "Prefix for resource names"
+#   default="cyphert"
+# }
+variable "vm_name" {
   description = "Name of the service"
   default="testing"
+}
+variable "resource_group_name" {
+  description = "Name of the resource group"
+  default="TARGDND"
+}
+variable "network_security_group" {
+  description = "Name of the network security group"
+  default="TANSGDND"
+}
+variable "virtual_network" {
+  description = "Name of the virtual network"
+  default="TAVNDND"
 }
 variable "location" {
   description = "Resource location. To see full list run 'az account list-locations'"
@@ -38,7 +53,7 @@ variable "cidr" {
   default = "10.0.0.0/16"
 }
 variable "subnet" {
-  default = "10.0.1.0/24"
+  default = "default"
 }
 variable "vm_size" {
   description = "Size of the vm. To see full list run 'az vm list-sizes'"
@@ -68,7 +83,12 @@ variable "os_type" {
   default="windows"
 }
 
-variable "username" {
+variable "disk_size" {
+  description = "Size of the disk in GB."
+  default="windows"
+}
+
+variable "vm_username" {
   description = "The username for the target VM"
   type   = string
   default = "Administrators"
@@ -81,7 +101,7 @@ variable "publisher" {
   }
 
 
-variable "tag1" {
+variable "tag" {
   type   = string
   default = "cypher"
   }
@@ -99,9 +119,4 @@ variable "sku" {
 variable "os_version" {
    type   = string
   default = "latest"
-  }
-
-variable "domain_name_label" {
-   type   = string
-  default = "ameydw1234"
   }
