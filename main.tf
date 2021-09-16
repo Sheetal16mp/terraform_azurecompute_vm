@@ -1,10 +1,10 @@
-# We strongly recommend using the required_providers block to set the  
+# We strongly recommend using the required_providers block to set the 
 # Azure Provider source and version being used
 terraform {
   required_providers {
     azurerm = {
       source = "hashicorp/azurerm"
-      version = "=2.75.0"
+      version = "=2.54.0"
     }
   }
 }
@@ -21,40 +21,41 @@ provider "azurerm" {
   tenant_id       = var.tenant_id
 }
 
-data "azurerm_resource_group" "hcmxexample" {
-  name     = var.resource_group_name
+resource "azurerm_resource_group" "hcmxexample" {
+  name     = var.name
+  location = var.location
 }
 
 resource "azurerm_public_ip" "hcmxexample" {
-  name                = var.vm_name
-  resource_group_name = data.azurerm_resource_group.hcmxexample.name
+  name                = var.name
+  resource_group_name = azurerm_resource_group.hcmxexample.name
   location            = var.location
   allocation_method   = "Dynamic"
-  domain_name_label   = var.vm_name
+  domain_name_label   = var.domain_name_label
   tags = {
-    environment = var.tag
+    environment = var.tag1
   }
 }
 
-data "azurerm_network_security_group" "hcmxexample" {
-  name                = var.network_security_group
-  #location            = var.location
-  resource_group_name = data.azurerm_resource_group.hcmxexample.name
+resource "azurerm_network_security_group" "hcmxexample" {
+  name                = var.name
+  location            = var.location
+  resource_group_name = azurerm_resource_group.hcmxexample.name
   }
   
-  #resource "azurerm_network_security_rule" "hcmxexample" {
-  #name                        = "ssh"
-  #priority                    = 100
-  #direction                   = "Inbound"
-  #access                      = "Allow"
-  #protocol                    = "Tcp"
-  #source_port_range           = "*"
-  #destination_port_range      = "22"
-  #source_address_prefix       = "*"
-  #destination_address_prefix  = "*"
-  #resource_group_name         = data.azurerm_resource_group.hcmxexample.name
-  #network_security_group_name = azurerm_network_security_group.hcmxexample.name
-#}
+  resource "azurerm_network_security_rule" "hcmxexample" {
+  name                        = "ssh"
+  priority                    = 100
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  destination_port_range      = "22"
+  source_address_prefix       = "*"
+  destination_address_prefix  = "*"
+  resource_group_name         = azurerm_resource_group.hcmxexample.name
+  network_security_group_name = azurerm_network_security_group.hcmxexample.name
+}
 
 # resource "azurerm_network_ddos_protection_plan" "hcmxexample" {
 # name                = var.name
@@ -62,11 +63,11 @@ data "azurerm_network_security_group" "hcmxexample" {
 # resource_group_name = azurerm_resource_group.hcmxexample.name
 # }
 
-data "azurerm_virtual_network" "hcmxexample" {
-  name                = var.virtual_network
-  #location            = data.azurerm_network_security_group.hcmxexample.location
-  resource_group_name = data.azurerm_resource_group.hcmxexample.name
- # address_space       = ["10.0.0.0/16"]
+resource "azurerm_virtual_network" "hcmxexample" {
+  name                = var.name
+  location            = azurerm_resource_group.hcmxexample.location
+  resource_group_name = azurerm_resource_group.hcmxexample.name
+  address_space       = ["10.0.0.0/16"]
 
   # ddos_protection_plan {
   #  id     = azurerm_network_ddos_protection_plan.hcmxexample.id
@@ -75,50 +76,50 @@ data "azurerm_virtual_network" "hcmxexample" {
 
 }
 
-data "azurerm_subnet" "hcmxexample" {
-  name                 = var.subnet
-  resource_group_name  = data.azurerm_resource_group.hcmxexample.name
-  virtual_network_name = data.azurerm_virtual_network.hcmxexample.name
-  #address_prefixes     = ["10.0.2.0/24"]
+resource "azurerm_subnet" "hcmxexample" {
+  name                 = var.name
+  resource_group_name  = azurerm_resource_group.hcmxexample.name
+  virtual_network_name = azurerm_virtual_network.hcmxexample.name
+  address_prefixes     = ["10.0.2.0/24"]
 }
 
 resource "azurerm_network_interface" "hcmxexample" {
-  name                = var.vm_name
+  name                = var.name
   location            = var.location
-  resource_group_name = data.azurerm_resource_group.hcmxexample.name
+  resource_group_name = azurerm_resource_group.hcmxexample.name
 
   ip_configuration {
-    name                          = var.vm_name
-    subnet_id                     = data.azurerm_subnet.hcmxexample.id
+    name                          = var.name
+    subnet_id                     = azurerm_subnet.hcmxexample.id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.hcmxexample.id
                  }
   }
 
 
-#resource "azurerm_private_dns_zone" "hcmxexample" {
-#  name                = "hcmxexample.com"
-#  resource_group_name = data.azurerm_resource_group.hcmxexample.name
-#}
+resource "azurerm_private_dns_zone" "hcmxexample" {
+  name                = "hcmxexample.com"
+  resource_group_name = azurerm_resource_group.hcmxexample.name
+}
   
  resource "azurerm_linux_virtual_machine" "hcmxexample" {
   count = var.os_type=="linux" ? 1 : 0
-  name                = var.vm_name
-  resource_group_name = data.azurerm_resource_group.hcmxexample.name
+  name                = var.name
+  resource_group_name = azurerm_resource_group.hcmxexample.name
   location            = var.location
   size                = var.vm_size
-  admin_username      = var.vm_username
+  admin_username      = var.username
   admin_password      = var.password
   disable_password_authentication = false
   network_interface_ids = [
     azurerm_network_interface.hcmxexample.id,
   ]
   tags = {
-    environment = var.tag
+    environment = var.tag1
   }
   os_disk {
     caching              = "ReadWrite"
-    storage_account_type = var.type_of_storage
+    storage_account_type = "Standard_LRS"
   }
    
   source_image_reference {
@@ -131,21 +132,21 @@ resource "azurerm_network_interface" "hcmxexample" {
 
 resource "azurerm_windows_virtual_machine" "hcmxexample" {
   count = var.os_type=="windows" ? 1 : 0
-  name                = var.vm_name
-  resource_group_name = data.azurerm_resource_group.hcmxexample.name
+  name                = var.name
+  resource_group_name = azurerm_resource_group.hcmxexample.name
   location            = var.location
   size                = var.vm_size
-  admin_username      = var.vm_username
+  admin_username      = var.username
   admin_password      = var.password
   network_interface_ids = [
     azurerm_network_interface.hcmxexample.id,
   ]
   tags = {
-    environment = var.tag
+    environment = var.tag1
   }
   os_disk {
     caching              = "ReadWrite"
-    storage_account_type = var.type_of_storage
+    storage_account_type = "Standard_LRS"
   }
    
   source_image_reference {
@@ -157,13 +158,12 @@ resource "azurerm_windows_virtual_machine" "hcmxexample" {
 }
 
 resource "azurerm_managed_disk" "hcmxexample" {
-  name                 = "${var.vm_name}-disk"
+  name                 = "${var.name}-disk1"
   location             = var.location
-  #resource_group_name  = var.os_type=="linux" ? azurerm_linux_virtual_machine.hcmxexample[0].name : azurerm_windows_virtual_machine.hcmxexample[0].name
-  resource_group_name = data.azurerm_resource_group.hcmxexample.name
-  storage_account_type = var.type_of_storage
+  resource_group_name  = var.os_type=="linux" ? azurerm_linux_virtual_machine.hcmxexample[0].name : azurerm_windows_virtual_machine.hcmxexample[0].name
+  storage_account_type = "Standard_LRS"
   create_option        = "Empty"
-  disk_size_gb         = var.disk_size
+  disk_size_gb         = 10
 }
 
 resource "azurerm_virtual_machine_data_disk_attachment" "hcmxexample" {
@@ -174,57 +174,59 @@ resource "azurerm_virtual_machine_data_disk_attachment" "hcmxexample" {
 }
 
 data "azurerm_public_ip" "hcmxexample" {
-  name                = var.vm_name
-  resource_group_name = var.os_type=="linux" ? azurerm_linux_virtual_machine.hcmxexample[0].resource_group_name : azurerm_windows_virtual_machine.hcmxexample[0].resource_group_name
- #resource_group_name = data.azurerm_resource_group.hcmxexample.name
+  name                = var.name
+  resource_group_name = var.os_type=="linux" ? azurerm_linux_virtual_machine.hcmxexample[0].name : azurerm_windows_virtual_machine.hcmxexample[0].name
 }
 
+
+output "domain_name_label" {
+  value = data.azurerm_public_ip.hcmxexample.domain_name_label
+}
 
 output "public_ip_address" {
   value = data.azurerm_public_ip.hcmxexample.ip_address
 }
 
 data "azurerm_network_interface" "hcmxexample" {
-  name                = var.vm_name
-  resource_group_name = var.os_type=="linux" ? azurerm_linux_virtual_machine.hcmxexample[0].resource_group_name : azurerm_windows_virtual_machine.hcmxexample[0].resource_group_name
-  #resource_group_name = var.resource_group_name
+  name                = var.name
+  resource_group_name = var.os_type=="linux" ? azurerm_linux_virtual_machine.hcmxexample[0].name : azurerm_windows_virtual_machine.hcmxexample[0].name
 }
 
-output "network_interface_name" {
-  value = azurerm_network_interface.hcmxexample.name
+output "network_interface_id" {
+  value = data.azurerm_network_interface.hcmxexample.id
 }
 
-output "private_ip_address" {
+output "network_interface_private_ip_address" {
   value = data.azurerm_network_interface.hcmxexample.private_ip_address
 }
 
-output "primary_dns_name" {
+output "fqdn" {
   value = data.azurerm_public_ip.hcmxexample.fqdn
 }
 
-# output "resource_group_name" {
-#   value = var.os_type=="linux" ? azurerm_linux_virtual_machine.hcmxexample[0].name : azurerm_windows_virtual_machine.hcmxexample[0].name
-# }
+output "resource_group_name" {
+  value = var.os_type=="linux" ? azurerm_linux_virtual_machine.hcmxexample[0].name : azurerm_windows_virtual_machine.hcmxexample[0].name
+}
 
-# output "network_security_group_name" {
-#   value = data.azurerm_network_security_group.hcmxexample.name
-# }
+output "azurerm_network_security_group" {
+  value = azurerm_network_security_group.hcmxexample.name
+}
 
-# output "azurerm_subnet" {
-#   value = data.azurerm_subnet.hcmxexample.name
-# }
+output "azurerm_subnet" {
+  value = azurerm_subnet.hcmxexample.name
+}
 
-# output "virtual_network_name" {
-#   value = data.azurerm_subnet.hcmxexample.virtual_network_name
-# }
+output "virtual_network_name" {
+  value = azurerm_subnet.hcmxexample.virtual_network_name
+}
 
 output "azurerm_network_interface" {
   value = azurerm_network_interface.hcmxexample.name
 }
 
-# output "size" {
-#   value = var.os_type=="linux" ? azurerm_linux_virtual_machine.hcmxexample[0].size : azurerm_windows_virtual_machine.hcmxexample[0].size
-# }
+output "size" {
+  value = var.os_type=="linux" ? azurerm_linux_virtual_machine.hcmxexample[0].size : azurerm_windows_virtual_machine.hcmxexample[0].size
+}
 
 output "virtual_machine_id" {
   value = var.os_type=="linux" ? azurerm_linux_virtual_machine.hcmxexample[0].virtual_machine_id : azurerm_windows_virtual_machine.hcmxexample[0].virtual_machine_id
@@ -238,11 +240,11 @@ output "cloud_instance_id" {
   value = var.os_type=="linux" ? azurerm_linux_virtual_machine.hcmxexample[0].id : azurerm_windows_virtual_machine.hcmxexample[0].id
 }
 
-#output "azurerm_private_dns_zone" {
-#  value = azurerm_private_dns_zone.hcmxexample.name
-#}
+output "azurerm_private_dns_zone" {
+  value = azurerm_private_dns_zone.hcmxexample.name
+}
 
-output "data_disk_name" {
+output "azurerm_managed_disk" {
   value = azurerm_managed_disk.hcmxexample.name
 }
 
