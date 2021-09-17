@@ -31,9 +31,6 @@ resource "azurerm_public_ip" "hcmxexample" {
   location            = var.location
   allocation_method   = "Dynamic"
   domain_name_label   = var.vm_name
-  tags = {
-    environment = var.tag
-  }
 }
 
 data "azurerm_network_security_group" "hcmxexample" {
