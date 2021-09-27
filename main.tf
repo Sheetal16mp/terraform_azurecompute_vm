@@ -30,7 +30,7 @@ resource "azurerm_public_ip" "hcmxexample" {
   resource_group_name = data.azurerm_resource_group.hcmxexample.name
   location            = var.location
   allocation_method   = "Dynamic"
-  domain_name_label   = var.vm_name
+  domain_name_label   = var.domain_name_label
 }
 
 data "azurerm_network_security_group" "hcmxexample" {
