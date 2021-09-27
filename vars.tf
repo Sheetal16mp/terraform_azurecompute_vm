@@ -20,51 +20,37 @@ variable "password" {
 
 variable "type_of_storage" {
   type   = string
-  default = "Standard_LRS"
   }
 
 variable "vm_name" {
-  description = "Name of the service"
-  default="testing"
+  description = "Name of the virtual machine"
+}
+
+variable "domain_name_label" {
+  description = "Prefix for the primary DNS name"
 }
 
 variable "resource_group_name" {
   description = "Name of the resource group"
-  default="TARGDND"
-}
-
-variable "network_security_group" {
-  description = "Name of the network security group"
-  default="TANSGDND"
 }
 
 variable "virtual_network" {
   description = "Name of the virtual network"
-  default="TAVNDND"
 }
 
 variable "location" {
   description = "Resource location. To see full list run 'az account list-locations'"
-  default="westus"
 }
 
 variable "subnet" {
-  default = "default"
 }
 
 variable "vm_size" {
   description = "Size of the vm. To see full list run 'az vm list-sizes'"
-  default="Basic_A0"
-}
-
-variable "allocation_method" {
-  description = "Defines how an IP address is assigned. Options are Static or Dynamic."
-  default     = "Dynamic"
 }
 
 variable "os_type" {
   description = "OS Type of the VM. Valid values are - windows, linux"
-  default="windows"
 }
 
 variable "disk_size" {
@@ -74,26 +60,21 @@ variable "disk_size" {
 variable "vm_username" {
   description = "The username for the target VM"
   type   = string
-  default = "Administrators"
   }
 
 variable "publisher" {
-  default="MicrosoftWindowsServer"
   description = "The Publisher"
   type   = string
   }
 
 variable "offer" {
   type   = string
-  default = "WindowsServer"
   }
 
 variable "sku" {
   type   = string
-  default = "2019-Datacenter"
   }
 
 variable "os_version" {
    type   = string
-  default = "latest"
   }
