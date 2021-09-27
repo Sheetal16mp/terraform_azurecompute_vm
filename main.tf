@@ -33,11 +33,6 @@ resource "azurerm_public_ip" "hcmxexample" {
   domain_name_label   = var.domain_name_label
 }
 
-data "azurerm_network_security_group" "hcmxexample" {
-  name                = var.network_security_group
-  resource_group_name = data.azurerm_resource_group.hcmxexample.name
-  }
-
 data "azurerm_virtual_network" "hcmxexample" {
   name                = var.virtual_network
   resource_group_name = data.azurerm_resource_group.hcmxexample.name
